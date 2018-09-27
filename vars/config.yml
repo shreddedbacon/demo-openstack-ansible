@@ -1,0 +1,146 @@
+project:
+  name: demo
+  group: demo
+
+auth:
+  auth_url: "{{ lookup('env', 'OS_AUTH_URL') }}"
+  username: "{{ lookup('env', 'OS_USERNAME')}}"
+  password: "{{ lookup('env', 'OS_PASSWORD') }}"
+  project_name: '{{project.name}}'
+
+quotas:
+  - name: '{{project.name}}'
+    ram: 194560
+    cores: 100
+    volumes: 50
+
+users:
+  - name: user1
+    password: securepassword
+
+int_networks:
+  - name: demonet01
+    external: False
+    project: '{{project.name}}'
+    provider_network_type: vlan
+    provider_physical_network: physnet1
+  - name: boshdemo
+    external: False
+    project: '{{project.name}}'
+    provider_network_type: vlan
+    provider_physical_network: physnet1
+
+
+int_subnets:
+  - name: demosub01
+    network_name: demonet01
+    cidr: 192.168.140.0/24
+    dns_nameservers:
+      - 192.168.101.1
+  - name: boshdemosub
+    network_name: boshdemo
+    cidr: 192.168.209.0/24
+    dns_nameservers:
+      - 192.168.101.1
+
+security_groups:
+  - name: demo-all
+    description: "all ports"
+  - name: demo-web
+    description: "http ports"
+  - name: demo-bosh
+    description: "bosh"
+
+rules:
+  - security_group: demo-bosh
+    protocol: tcp
+    port_range_min: 22
+    port_range_max: 22
+    remote_ip_prefix: 192.168.101.0/24
+  - security_group: demo-bosh
+    protocol: tcp
+    port_range_min: 6868
+    port_range_max: 6868
+    remote_ip_prefix: 192.168.101.0/24
+  - security_group: demo-bosh
+    protocol: tcp
+    port_range_min: 25555
+    port_range_max: 25555
+    remote_ip_prefix: 192.168.101.0/24
+  - security_group: demo-bosh
+    protocol: tcp
+    port_range_min: 22
+    port_range_max: 22
+    remote_ip_prefix: 192.168.101.0/24
+  - security_group: demo-bosh
+    protocol: tcp
+    port_range_min: -1
+    port_range_max: -1
+    remote_group: demo-bosh
+  - security_group: demo-bosh
+    protocol: icmp
+    port_range_min: -1
+    port_range_max: -1
+    remote_group: demo-bosh
+  - security_group: demo-bosh
+    protocol: tcp
+    port_range_min: 4222
+    port_range_max: 4222
+    remote_group: demo-web
+  - security_group: demo-bosh
+    protocol: tcp
+    port_range_min: 25250
+    port_range_max: 25250
+    remote_group: demo-web
+  - security_group: demo-bosh
+    protocol: tcp
+    port_range_min: 25777
+    port_range_max: 25777
+    remote_group: demo-web
+  - security_group: demo-web
+    protocol: tcp
+    port_range_min: 80
+    port_range_max: 80
+    remote_ip_prefix: 0.0.0.0/0
+  - security_group: demo-web
+    protocol: tcp
+    port_range_min: -1
+    port_range_max: -1
+    remote_group: demo-bosh
+  - security_group: demo-web
+    protocol: icmp
+    port_range_min: -1
+    port_range_max: -1
+    remote_ip_prefix: 0.0.0.0/0
+  - security_group: demo-web
+    protocol: udp
+    port_range_min: -1
+    port_range_max: -1
+    remote_group: demo-bosh
+  - security_group: demo-all
+    protocol: icmp
+    port_range_min: -1
+    port_range_max: -1
+    remote_ip_prefix: 0.0.0.0/0
+  - security_group: demo-all
+    protocol: tcp
+    port_range_min: -1
+    port_range_max: -1
+    remote_ip_prefix: 0.0.0.0/0
+  - security_group: demo-all
+    protocol: udp
+    port_range_min: -1
+    port_range_max: -1
+    remote_ip_prefix: 0.0.0.0/0
+
+
+routers:
+  - name: demoexternal
+    network: extnet
+    external_fixed_ips:
+      - subnet: extsubnet
+        ip: 192.168.101.89
+    interfaces:
+      - demosub01
+      - boshdemosub
+
