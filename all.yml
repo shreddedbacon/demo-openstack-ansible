@@ -1,0 +1,9 @@
+---
+#####
+# Deploy all the things
+#####
+- include: project.yml
+- include: users.yml
+- include: networks.yml
+- include: security_groups.yml
+- include: quotas.yml
