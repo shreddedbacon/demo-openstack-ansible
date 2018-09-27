@@ -2,5 +2,5 @@
 
 Run all playbooks
 ```
-ansible-playbook demo.yml
+ansible-playbook all.yml
 ```
