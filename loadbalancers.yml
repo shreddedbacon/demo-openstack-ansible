@@ -18,11 +18,11 @@
     with_items: '{{loadbalancers.lbs}}'
     register: existing_lbs
 
-  - name: debug
-    debug:
-      msg: "testing"
-    when: item.stdout == ""
-    with_items: "{{existing_lbs.results}}"
+  #  - name: debug
+  #    debug:
+  #      msg: "testing"
+  #    when: item.stdout == ""
+  #    with_items: "{{existing_lbs.results}}"
 
   - name: create loadbalancer
     shell: '. /root/keystonerc_demo && neutron lbaas-loadbalancer-create --name {{item.0.name}} {{item.0.subnet}}'
@@ -32,24 +32,24 @@
       - '{{existing_lbs.results}}'
     register: created_lbs
 
-  - name: debug
-    debug:
-      msg: "{{item.item.0.name}}"
-    when: item.item.1.stdout == ""
-    with_items: "{{created_lbs.results}}"
+  #  - name: debug
+  #    debug:
+  #      msg: "{{item.item.0.name}}"
+  #    when: item.item.1.stdout == ""
+  #    with_items: "{{created_lbs.results}}"
 
   - name: facts loadbalancer listener
     shell: '. /root/keystonerc_demo && neutron lbaas-listener-list -f value -c name | grep "{{item.name}}" | cat'
     with_items: '{{loadbalancers.listeners}}'
     register: existing_listeners
 
-  - name: debug
-    debug:
-      msg: "listener: {{item.1.name}}, Loadbalancer: {{item.1.loadbalancer}}"
-    when: item.0.stdout == ""
-    with_together:
-      - "{{existing_listeners.results}}"
-      - "{{loadbalancers.listeners}}"
+  #  - name: debug
+  #    debug:
+  #      msg: "listener: {{item.1.name}}, Loadbalancer: {{item.1.loadbalancer}}"
+  #    when: item.0.stdout == ""
+  #    with_together:
+  #      - "{{existing_listeners.results}}"
+  #      - "{{loadbalancers.listeners}}"
 
   - name: create loadbalancer listener
     shell: '. /root/keystonerc_demo && neutron lbaas-listener-create --name {{item.1.name}} --loadbalancer {{item.1.loadbalancer}} --protocol {{item.1.protocol}} --protocol-port {{item.1.protocol_port}}'
@@ -63,13 +63,13 @@
     with_items: '{{loadbalancers.pools}}'
     register: existing_pools
 
-  - name: debug
-    debug:
-      msg: "pool: {{item.1.name}}, listener: {{item.1.listener}}"
-    when: item.0.stdout == ""
-    with_together:
-      - "{{existing_pools.results}}"
-      - "{{loadbalancers.pools}}"
+  #  - name: debug
+  #    debug:
+  #      msg: "pool: {{item.1.name}}, listener: {{item.1.listener}}"
+  #    when: item.0.stdout == ""
+  #    with_together:
+  #      - "{{existing_pools.results}}"
+  #      - "{{loadbalancers.pools}}"
 
   - name: create loadbalancer pool
     shell: '. /root/keystonerc_demo && neutron lbaas-pool-create --name {{item.1.name}} --lb-algorithm {{item.1.lb_algorithm}} --listener {{item.1.listener}} --protocol {{item.1.protocol}}'
