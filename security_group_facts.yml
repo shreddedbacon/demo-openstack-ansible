@@ -1,0 +1,24 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: yes
+
+  vars_files:
+    - vars/config.yml
+
+  tasks:
+  - name: project_id
+    os_project_facts:
+      name: '{{project_name}}'
+
+  - name: security group facts
+    os_security_group_facts:
+      filters:
+        tenant_id: '{{openstack_projects.0.id}}'
+    register: secgroups
+
+  - name: debug
+    debug:
+      msg: "{{item}}"
+    with_items: '{{secgroups.ansible_facts.openstack_security_groups}}'
+
