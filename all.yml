@@ -7,3 +7,4 @@
 - include: networks.yml
 - include: security_groups.yml
 - include: quotas.yml
+- include: loadbalancers.yml

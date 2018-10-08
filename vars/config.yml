@@ -144,3 +144,17 @@ routers:
       - demosub01
       - boshdemosub
 
+loadbalancers:
+  lbs:
+    - name: demo-lb
+      subnet: demosub01
+  listeners:
+    - name: demo-listener
+      loadbalancer: demo-lb
+      protocol: HTTP
+      protocol_port: 80
+  pools:
+    - name: demo-pool
+      listener: demo-listener
+      protocol: HTTP
+      lb_algorithm: ROUND_ROBIN

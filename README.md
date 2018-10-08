@@ -2,5 +2,5 @@
 
 Run all playbooks
 ```
-ansible-playbook all.yml
+ansible-playbook -i hosts all.yml
 ```
